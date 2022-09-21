@@ -37,6 +37,16 @@ endstop_pin: ^PC0
 position_endstop: 0.5
 position_max: 200
 
+[bltouch] 
+sensor_pin: ^PC13
+control_pin: PE5 
+pin_up_touch_mode_reports_triggered: False 
+x_offset: -52 
+y_offset: -18 
+z_offset: 4.076 
+pin_move_time: 0.4 
+samples: 3
+
 [extruder]
 step_pin: PD15
 dir_pin: PD14
