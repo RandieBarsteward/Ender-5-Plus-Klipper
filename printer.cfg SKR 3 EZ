@@ -61,6 +61,11 @@ samples: 2
 sample_retract_dist: 3.0
 pin_up_touch_mode_reports_triggered: False
 
+[safe_z_home]
+home_xy_position: 180,180
+speed: 80.0
+z_hop: 10.0
+z_hop_speed: 5.0
 
 [extruder]
 step_pin: PD15
