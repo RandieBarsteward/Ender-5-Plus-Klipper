@@ -48,37 +48,18 @@ rotation_distance: 40
 
 [bltouch]
 
-sensor_pin: ^PE5
-control_pin: PC13
-pin_move_time: 0.680
-#stow_on_each_sample: True
-probe_with_touch_mode: False
-pin_up_reports_not_triggered: False
-pin_up_touch_mode_reports_triggered: True
-#set_output_mode: 5V
-x_offset: 27
-y_offset: -5
-z_offset: 0.245
-speed: 10.0
-samples: 1
-#sample_retract_dist:
-samples_result: average
-#samples_tolerance:
-#samples_tolerance_retries:
-
-#ORIGINAL try
-#sensor_pin: ^PC13 #PROBE
-#control_pin: PE5 #SERVOS
-#stow_on_each_sample: False
-#probe_with_touch_mode: True
-#set_output_mode: 5V
-#x_offset: -45
-#y_offset: 0
-#z_offset: 2.0
-#speed: 50
-#samples: 2
-#sample_retract_dist: 3.0
-#pin_up_touch_mode_reports_triggered: False
+sensor_pin: ^PC13 #PROBE
+control_pin: PE5 #SERVOS
+stow_on_each_sample: False
+probe_with_touch_mode: True
+set_output_mode: 5V
+x_offset: -45
+y_offset: 0
+z_offset: 2.0
+speed: 50
+samples: 2
+sample_retract_dist: 3.0
+pin_up_touch_mode_reports_triggered: False
 
 
 [extruder]
