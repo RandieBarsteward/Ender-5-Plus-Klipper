@@ -1,4 +1,3 @@
-
 # This file contains common pin mappings for the BigTreeTech SKR 3.
 # To use this config, the firmware should be compiled for the
 # STM32H743 with a "128KiB bootloader".
@@ -7,87 +6,116 @@
 
 [stepper_x]
 step_pin: PD4
-dir_pin: PD3
+dir_pin: !PD3
 enable_pin: !PD6
 microsteps: 16
 rotation_distance: 40
 endstop_pin: ^PC1
 position_endstop: 0
-position_max: 200
-homing_speed: 50
+position_max: 350
+homing_speed: 100
+homing_retract_dist: 5
 
 [stepper_y]
 step_pin: PA15
-dir_pin: !PA8
+dir_pin: PA8
 enable_pin: !PD1
 microsteps: 16
 rotation_distance: 40
 endstop_pin: ^PC3
 position_endstop: 0
-position_max: 200
+position_max: 350
 homing_speed: 50
+homing_retract_dist: 5
 
 [stepper_z]
 step_pin: PE2
-dir_pin: PE3
+dir_pin: !PE3
 enable_pin: !PE0
+endstop_pin: probe:z_virtual_endstop
 microsteps: 16
-rotation_distance: 40
-endstop_pin: ^PC0
-position_endstop: 0.5
-position_max: 200
+rotation_distance: 4
+position_min: 0
+position_max: 400
+homing_speed: 10.0 
 
-[bltouch] 
-sensor_pin: ^PC13
-control_pin: PE5 
-pin_up_touch_mode_reports_triggered: False 
-x_offset: -52 
-y_offset: -18 
-z_offset: 4.076 
-pin_move_time: 0.4 
-samples: 3
+[stepper_z1]
+step_pin: PD11
+dir_pin: !PD10
+enable_pin: !PD13
+microsteps: 16
+rotation_distance: 4
+
 
 [extruder]
 step_pin: PD15
-dir_pin: PD14
+dir_pin: !PD14
 enable_pin: !PC7
+
+
+#Sherpa mini block start
+rotation_distance: 22.67895 #for 5mm Shaft Driven Bondtech gearsets
+#gear_ratio: 50:10 #for standard 10t motor
+gear_ratio: 50:8 #for sherpa mini 8t motor
 microsteps: 16
-rotation_distance: 33.500
-nozzle_diameter: 0.400
+full_steps_per_rotation: 200 #1.8deg Motor
+max_extrude_only_distance: 1400.0
+max_extrude_only_velocity: 75.0
+max_extrude_only_accel: 1500
+#Sherpa mini block end
+#microsteps: 16
+#rotation_distance: 31.662 ##Change this for your printer. I'm using an orbiter not a BMG ##
+nozzle_diameter: 0.8
 filament_diameter: 1.750
 heater_pin: PB3
 sensor_type: EPCOS 100K B57560G104F
 sensor_pin: PA2
-control: pid
-pid_Kp: 22.2
-pid_Ki: 1.08
-pid_Kd: 114
+#control: pid
+#pid_Kp: 22.2
+#pid_Ki: 1.08
+#pid_Kd: 114
 min_temp: 0
 max_temp: 250
 
-#[extruder1]
-#step_pin: PD11
-#dir_pin: PD10
-#enable_pin: !PD13
-#heater_pin: PB4
-#sensor_pin: PA3
-
 [heater_bed]
 heater_pin: PD7
-sensor_type: Generic 3950
+sensor_type: EPCOS 100K B57560G104F
 sensor_pin: PA1
-control: watermark
-min_temp: 0
-max_temp: 130
+#control = pid
+#pid_kp = 67.534
+#pid_ki = 0.864
+#pid_kd = 1319.450
+min_temp: 5
+max_temp: 140
 
 [fan]
-pin: PB7
+pin: PB6
 
-#[heater_fan fan1]
-#pin: PB6
+[heater_fan fan1]
+pin: PB7
 
 #[heater_fan fan2]
 #pin: PB5
+
+[safe_z_home]
+home_xy_position: 180, 180
+speed: 100
+z_hop: 10
+z_hop_speed: 5
+
+[bltouch]
+sensor_pin: PC13 #Probe
+control_pin: PE5 #SERVOS
+#stow_on_each_sample: False
+#probe_with_touch_mode: True
+#set_output_mode: 5V
+x_offset: 31
+y_offset: 11
+z_offset: 2.0
+#speed: 50
+#samples: 2
+#sample_retract_dist: 3.0
+#pin_up_touch_mode_reports_triggered: False
 
 [mcu]
 serial: /dev/serial/by-id/usb-Klipper_stm32h743xx_240043001251303232383230-if00
@@ -96,6 +124,7 @@ serial: /dev/serial/by-id/usb-Klipper_stm32h743xx_240043001251303232383230-if00
 kinematics: cartesian
 max_velocity: 300
 max_accel: 3000
+max_accel_to_decel:3000
 max_z_velocity: 5
 max_z_accel: 100
 
@@ -133,15 +162,17 @@ uart_pin: PE1
 run_current: 0.800
 diag_pin:
 
+[tmc2209 stepper_z1]
+uart_pin: PD12
+run_current: 0.800
+diag_pin:
+
 [tmc2209 extruder]
 uart_pin: PC6
 run_current: 0.600
 diag_pin:
 
-#[tmc2209 extruder1]
-#uart_pin: PD12
-#run_current: 0.600
-#diag_pin:
+
 
 ########################################
 # TMC2130 configuration
@@ -191,7 +222,6 @@ diag_pin:
 #run_current: 0.800
 #stealthchop_threshold: 999999
 #diag1_pin: PA0
-
 
 ########################################
 # Mainsail klipper definitions
@@ -282,3 +312,18 @@ gcode:
   {% else %}
     {action_respond_info("Printer not homed")}
   {% endif %}
+
+#*# <---------------------- SAVE_CONFIG ---------------------->
+#*# DO NOT EDIT THIS BLOCK OR BELOW. The contents are auto-generated.
+#*#
+#*# [extruder]
+#*# control = pid
+#*# pid_kp = 26.310
+#*# pid_ki = 1.462
+#*# pid_kd = 118.396
+#*#
+#*# [heater_bed]
+#*# control = pid
+#*# pid_kp = 61.061
+#*# pid_ki = 0.712
+#*# pid_kd = 1309.755
