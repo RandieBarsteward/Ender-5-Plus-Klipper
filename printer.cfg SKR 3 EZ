@@ -4,6 +4,15 @@
 
 # See docs/Config_Reference.md for a description of parameters.
 
+[include bed_mesh.cfg]
+[include safe_z_home.cfg]
+[include z_tilt.cfg]
+[include BED_MESH_CALIBRATE.cfg]
+[include START_PRINT.cfg]
+[include END_PRINT.cfg]
+[include verify_heater.cfg]
+[include respond.cfg]
+
 [stepper_x]
 step_pin: PD4
 dir_pin: !PD3
@@ -35,7 +44,7 @@ enable_pin: !PE0
 endstop_pin: probe:z_virtual_endstop
 microsteps: 16
 rotation_distance: 4
-position_min: 0
+position_min: -8
 position_max: 400
 homing_speed: 10.0 
 
@@ -51,6 +60,7 @@ rotation_distance: 4
 step_pin: PD15
 dir_pin: !PD14
 enable_pin: !PC7
+pressure_advance: 0.0315
 
 
 #Sherpa mini block start
@@ -59,37 +69,48 @@ rotation_distance: 22.67895 #for 5mm Shaft Driven Bondtech gearsets
 gear_ratio: 50:8 #for sherpa mini 8t motor
 microsteps: 16
 full_steps_per_rotation: 200 #1.8deg Motor
+
 max_extrude_only_distance: 1400.0
 max_extrude_only_velocity: 75.0
 max_extrude_only_accel: 1500
+
 #Sherpa mini block end
 #microsteps: 16
 #rotation_distance: 31.662 ##Change this for your printer. I'm using an orbiter not a BMG ##
 nozzle_diameter: 0.8
 filament_diameter: 1.750
 heater_pin: PB3
-sensor_type: EPCOS 100K B57560G104F
+
+sensor_type: Generic 3950 #EPCOS 100K B57560G104F
 sensor_pin: PA2
-#control: pid
-#pid_Kp: 22.2
-#pid_Ki: 1.08
-#pid_Kd: 114
 min_temp: 0
-max_temp: 250
+max_temp: 270
+
+
+[thermistor Trianglelab NTC100K B3950]
+## values calibrated against a PT100 reference
+temperature1: 25.0
+resistance1: 103180.0
+temperature2: 150.0
+resistance2: 1366.2
+temperature3: 250.0
+resistance3: 168.6
 
 [heater_bed]
 heater_pin: PD7
 sensor_type: EPCOS 100K B57560G104F
 sensor_pin: PA1
-#control = pid
-#pid_kp = 67.534
-#pid_ki = 0.864
-#pid_kd = 1319.450
 min_temp: 5
 max_temp: 140
 
+
 [fan]
 pin: PB6
+shutdown_speed: 0
+cycle_time: 0.010
+hardware_pwm: False
+kick_start_time: 0.100
+off_below: 0.0
 
 [heater_fan fan1]
 pin: PB7
@@ -97,11 +118,6 @@ pin: PB7
 #[heater_fan fan2]
 #pin: PB5
 
-[safe_z_home]
-home_xy_position: 180, 180
-speed: 100
-z_hop: 10
-z_hop_speed: 5
 
 [bltouch]
 sensor_pin: PC13 #Probe
@@ -110,8 +126,9 @@ control_pin: PE5 #SERVOS
 #probe_with_touch_mode: True
 #set_output_mode: 5V
 x_offset: 31
-y_offset: 11
-z_offset: 2.0
+y_offset: 13
+#z_offset: 0
+
 #speed: 50
 #samples: 2
 #sample_retract_dist: 3.0
@@ -149,28 +166,30 @@ aliases:
 
 [tmc2209 stepper_x]
 uart_pin: PD5
-run_current: 0.800
+run_current: 0.45 #0.800
 diag_pin:
 
 [tmc2209 stepper_y]
 uart_pin: PD0
-run_current: 0.800
+run_current: 0.57 #0.800
 diag_pin:
 
 [tmc2209 stepper_z]
 uart_pin: PE1
-run_current: 0.800
+run_current: 0.48 #0.650 
 diag_pin:
 
 [tmc2209 stepper_z1]
 uart_pin: PD12
-run_current: 0.800
+run_current: 0.48 #0.650 
 diag_pin:
 
-[tmc2209 extruder]
+[tmc2209 extruder] #settings for NEMA14 Stepper
 uart_pin: PC6
-run_current: 0.600
-diag_pin:
+interpolate: True
+run_current: 0.30 #min current, equivalent to 0.42A peak (Peak = RMS/0.707)
+#run_current: 0.35 #max current, equivalent to 0.49A peak (Peak = RMS/0.707)
+
 
 
 
@@ -318,12 +337,34 @@ gcode:
 #*#
 #*# [extruder]
 #*# control = pid
-#*# pid_kp = 26.310
-#*# pid_ki = 1.462
-#*# pid_kd = 118.396
+#*# pid_kp = 29.642
+#*# pid_ki = 1.864
+#*# pid_kd = 117.828
 #*#
 #*# [heater_bed]
 #*# control = pid
-#*# pid_kp = 61.061
-#*# pid_ki = 0.712
-#*# pid_kd = 1309.755
+#*# pid_kp = 61.918
+#*# pid_ki = 0.800
+#*# pid_kd = 1198.111
+#*#
+#*# [bltouch]
+#*# z_offset = 3.35
+#*#
+#*# [bed_mesh default]
+#*# version = 1
+#*# points =
+#*# 	  -0.068125, 0.078125, 0.071875, 0.021875, -0.008750
+#*# 	  -0.055625, 0.071250, 0.080000, 0.055625, -0.032500
+#*# 	  -0.121875, 0.066250, -0.007500, -0.015000, -0.086875
+#*# 	  -0.117500, 0.035625, 0.002500, -0.060625, -0.176875
+#*# 	  -0.105000, -0.047500, -0.066875, -0.160000, -0.205000
+#*# x_count = 5
+#*# y_count = 5
+#*# mesh_x_pps = 2
+#*# mesh_y_pps = 3
+#*# algo = bicubic
+#*# tension = 0.2
+#*# min_x = 109.89
+#*# max_x = 250.09
+#*# min_y = 109.14
+#*# max_y = 250.85
